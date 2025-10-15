@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { MessageCircle, FileText, Brain, Calendar, LogOut, TrendingUp, Clock, BookOpen, Award, Settings, Bell, Search, BarChart3, Users, Zap, Upload } from 'lucide-react';
+import { MessageCircle, FileText, Brain, Calendar, LogOut, TrendingUp, Clock, BookOpen, Award, Settings, Bell, Search, BarChart3, Users, Zap, Upload, FolderOpen } from 'lucide-react';
 import { userService } from '../services/userService';
 import axios from 'axios';
 import './Dashboard.css';
@@ -261,6 +261,20 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </Link>
+
+                <Link to="/files" className="dashboard-quick-actions__card" style={{ animationDelay: '0.5s' }}>
+                  <div className="dashboard-quick-actions__icon" style={{ background: 'linear-gradient(135deg, #06b6d4, #0891b2)' }}>
+                    <FolderOpen size={20} />
+                  </div>
+                  <div className="dashboard-quick-actions__content">
+                    <h4>Study Files</h4>
+                    <p>Access all admin-uploaded study materials</p>
+                    <div className="dashboard-quick-actions__meta">
+                      <span className="dashboard-quick-actions__badge">Resources</span>
+                      <span>Browse files →</span>
+                    </div>
+                  </div>
+                </Link>
               </div>
             </div>
           </div>
@@ -390,8 +404,31 @@ const Dashboard = () => {
                       {note.semester && <span style={{ fontSize: '0.8rem', color: '#64748b', marginLeft: '0.5rem' }}>Semester {note.semester}</span>}
                       <p style={{ margin: '0.25rem 0', fontSize: '0.9rem' }}>{note.content.substring(0, 100)}...</p>
                       {note.fileName && (
-                        <a href={`http://localhost:5001/uploads/admin/${note.fileName}`} target="_blank" rel="noopener noreferrer" 
-                           style={{ color: '#3b82f6', fontSize: '0.8rem' }}>📎 {note.fileName}</a>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
+                          <a href={`http://localhost:5001/uploads/admin/${note.fileName}`} target="_blank" rel="noopener noreferrer" 
+                             style={{ color: '#3b82f6', fontSize: '0.8rem', textDecoration: 'none' }}>📎 {note.fileName}</a>
+                          <button 
+                            onClick={() => {
+                              const link = document.createElement('a');
+                              link.href = `http://localhost:5001/api/admin/download/note/${note._id}`;
+                              link.download = note.fileName;
+                              document.body.appendChild(link);
+                              link.click();
+                              document.body.removeChild(link);
+                            }}
+                            style={{
+                              background: '#22c55e',
+                              color: 'white',
+                              border: 'none',
+                              padding: '0.25rem 0.5rem',
+                              borderRadius: '0.25rem',
+                              fontSize: '0.7rem',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            ⬇️ Download
+                          </button>
+                        </div>
                       )}
                     </div>
                   ))}

@@ -6,14 +6,42 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [adminData, setAdminData] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [files, setFiles] = useState({ notes: [], importantNotes: [], timetables: [] });
 
   useEffect(() => {
     const data = localStorage.getItem('adminData');
     if (data) setAdminData(JSON.parse(data));
     
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    fetchFiles();
     return () => clearInterval(timer);
   }, []);
+
+  const fetchFiles = async () => {
+    try {
+      const [notesRes, importantRes, timetablesRes] = await Promise.all([
+        fetch('http://localhost:5001/api/admin/notes'),
+        fetch('http://localhost:5001/api/admin/important-notes'),
+        fetch('http://localhost:5001/api/admin/timetables')
+      ]);
+      
+      setFiles({
+        notes: await notesRes.json(),
+        importantNotes: await importantRes.json(),
+        timetables: await timetablesRes.json()
+      });
+    } catch (error) {
+      console.error('Error fetching files:', error);
+    }
+  };
+
+  const downloadFile = (type, id, filename) => {
+    const url = `http://localhost:5001/api/admin/download/${type}/${id}`;
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+  };
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
@@ -110,6 +138,48 @@ const AdminDashboard = () => {
               <div className="admin-card-arrow">→</div>
             </div>
           ))}
+        </div>
+
+        <div className="admin-files-section">
+          <h2>📁 Uploaded Files</h2>
+          
+          <div className="files-grid">
+            <div className="file-category">
+              <h3>📚 Notes ({files.notes.length})</h3>
+              {files.notes.map(note => (
+                <div key={note._id} className="file-item">
+                  <span>{note.title}</span>
+                  {note.fileName && (
+                    <button onClick={() => downloadFile('note', note._id, note.fileName)}>⬇️</button>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            <div className="file-category">
+              <h3>⚠️ Important Notes ({files.importantNotes.length})</h3>
+              {files.importantNotes.map(note => (
+                <div key={note._id} className="file-item">
+                  <span>{note.title}</span>
+                  {note.fileName && (
+                    <button onClick={() => downloadFile('important', note._id, note.fileName)}>⬇️</button>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            <div className="file-category">
+              <h3>📅 Timetables ({files.timetables.length})</h3>
+              {files.timetables.map(timetable => (
+                <div key={timetable._id} className="file-item">
+                  <span>{timetable.title}</span>
+                  {timetable.imagePath && (
+                    <button onClick={() => downloadFile('timetable', timetable._id, 'timetable.jpg')}>⬇️</button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

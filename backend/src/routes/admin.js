@@ -277,6 +277,31 @@ router.put('/mcq-tests/:id', adminAuth, async (req, res) => {
   }
 });
 
+// Download file
+router.get('/download/:type/:id', async (req, res) => {
+  try {
+    const { type, id } = req.params;
+    let filePath;
+    
+    if (type === 'note') {
+      const note = await AdminNote.findById(id);
+      filePath = note?.filePath;
+    } else if (type === 'important') {
+      const note = await ImportantNote.findById(id);
+      filePath = note?.filePath;
+    } else if (type === 'timetable') {
+      const timetable = await Timetable.findById(id);
+      filePath = timetable?.imagePath;
+    }
+    
+    if (!filePath) return res.status(404).json({ error: 'File not found' });
+    
+    res.download(filePath);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Delete routes
 router.delete('/notes/:id', adminAuth, async (req, res) => {
   try {

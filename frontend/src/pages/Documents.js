@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileText, Trash2, Search, Filter, Grid, List, Download, Eye, ArrowLeft, Plus } from 'lucide-react';
+import { Upload, FileText, Trash2, Search, Filter, Grid, List, Download, Eye, ArrowLeft, Plus, FolderOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
 
@@ -137,6 +137,10 @@ const Documents = () => {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <Link to="/files" className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white rounded-xl px-4 py-2 transition-all duration-200">
+                <FolderOpen size={16} />
+                <span className="text-sm font-medium">Admin Files</span>
+              </Link>
               <div className="flex items-center space-x-2 bg-white/70 rounded-xl px-4 py-2">
                 <span className="text-sm font-medium text-slate-700">{documents.length} documents</span>
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>

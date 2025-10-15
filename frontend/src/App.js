@@ -8,6 +8,8 @@ import Documents from './pages/Documents';
 import StudyPlanner from './pages/StudyPlanner';
 import QuizGenerator from './pages/QuizGenerator';
 import UploadNotes from './pages/UploadNotes';
+import Files from './pages/Files';
+import FilesSimple from './pages/FilesSimple';
 import Login from './pages/Login';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
@@ -54,6 +56,16 @@ function App() {
               <Route path="/upload-notes" element={
                 <ProtectedRoute>
                   <UploadNotes />
+                </ProtectedRoute>
+              } />
+              <Route path="/files" element={
+                <ProtectedRoute>
+                  <Files />
+                </ProtectedRoute>
+              } />
+              <Route path="/files-full" element={
+                <ProtectedRoute>
+                  <Files />
                 </ProtectedRoute>
               } />
               <Route path="/admin" element={<AdminLogin />} />
